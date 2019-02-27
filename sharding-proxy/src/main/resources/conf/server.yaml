@@ -4,16 +4,17 @@
 # 
 ######################################################################################################
 
+#服务配置治理
 #orchestration:
-#  name: orchestration_ds
+#  name: contract_proxy
 #  overwrite: true
 #  registry:
 #    serverLists: localhost:2181
 #    namespace: orchestration
-#
-#authentication:
-#  username: root
-#  password: root
+
+authentication:
+  username: root
+  password: root
 #
 #props:
 #  max.connections.size.per.query: 1
