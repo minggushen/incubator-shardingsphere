@@ -10,46 +10,34 @@
 
 #schemaName: sharding_db
 #
-#dataSources:
-#  ds_0:
-#    url: jdbc:mysql://127.0.0.1:3306/demo_ds_0?serverTimezone=UTC&useSSL=false
-#    username: root
-#    password:
-#    connectionTimeoutMilliseconds: 30000
-#    idleTimeoutMilliseconds: 60000
-#    maxLifetimeMilliseconds: 1800000
-#    maxPoolSize: 50
-#  ds_1:
-#    url: jdbc:mysql://127.0.0.1:3306/demo_ds_1?serverTimezone=UTC&useSSL=false
-#    username: root
-#    password:
-#    connectionTimeoutMilliseconds: 30000
-#    idleTimeoutMilliseconds: 60000
-#    maxLifetimeMilliseconds: 1800000
-#    maxPoolSize: 50
-#
-#shardingRule:
-#  tables:
-#    t_order:
-#      actualDataNodes: ds_${0..1}.t_order_${0..1}
-#      tableStrategy:
-#        inline:
-#          shardingColumn: order_id
-#          algorithmExpression: t_order_${order_id % 2}
-#      keyGeneratorColumnName: order_id
-#    t_order_item:
-#      actualDataNodes: ds_${0..1}.t_order_item_${0..1}
-#      tableStrategy:
-#        inline:
-#          shardingColumn: order_id
-#          algorithmExpression: t_order_item_${order_id % 2}
-#      keyGeneratorColumnName: order_item_id
-#  bindingTables:
-#    - t_order,t_order_item
+dataSources:
+  single_source:
+    url: jdbc:mysql://172.16.4.42:3306/contract_shard?serverTimezone=UTC&useSSL=false
+    username: root
+    password: yZT0b6m32UDg
+    connectionTimeoutMilliseconds: 30000
+    idleTimeoutMilliseconds: 60000
+    maxLifetimeMilliseconds: 1800000
+    maxPoolSize: 50
+
+
+shardingRule:
+  tables:
+    t_order:
+      actualDataNodes: single_source.loan_transfer_contract_${0..127}
+      tableStrategy:
+        inline:
+          shardingColumn: loan_transfer_id
+          algorithmExpression: loan_transfer_contract_${loan_transfer_id % 128}
+  bindingTables:
+  - loan_transfer_contract
 #  defaultDatabaseStrategy:
 #    inline:
 #      shardingColumn: user_id
 #      algorithmExpression: ds_${user_id % 2}
 #  defaultTableStrategy:
+#    inline:
+#      shardingColumn: loan_transfer_id
+#      algorithmExpression: loan_transfer_contract_${loan_transfer_id % 128}
 #    none:
 #  defaultKeyGeneratorClassName: io.shardingsphere.core.keygen.DefaultKeyGenerator

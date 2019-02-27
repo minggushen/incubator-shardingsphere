@@ -4,7 +4,7 @@ cd %~dp0
 
 set CLASS_PATH="..;..\conf;..\lib\*"
 
-set PORT=%1
+set PORT=3308
 
 set CONFIG=%2
 
