@@ -31,12 +31,14 @@ import io.shardingsphere.shardingproxy.transport.mysql.packet.command.CommandPac
 import io.shardingsphere.shardingproxy.transport.mysql.packet.command.CommandPacketFactory;
 import io.shardingsphere.shardingproxy.transport.mysql.packet.command.CommandResponsePackets;
 import io.shardingsphere.shardingproxy.transport.mysql.packet.command.query.QueryCommandPacket;
+import io.shardingsphere.shardingproxy.transport.mysql.packet.command.query.text.query.ComQueryPacket;
 import io.shardingsphere.shardingproxy.transport.mysql.packet.generic.EofPacket;
 import io.shardingsphere.shardingproxy.transport.mysql.packet.generic.ErrPacket;
 import io.shardingsphere.shardingproxy.transport.mysql.packet.generic.OKPacket;
 import io.shardingsphere.spi.root.RootInvokeHook;
 import io.shardingsphere.spi.root.SPIRootInvokeHook;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.SQLException;
 
@@ -47,6 +49,7 @@ import java.sql.SQLException;
  * @author zhaojun
  */
 @RequiredArgsConstructor
+@Slf4j
 public final class CommandExecutor implements Runnable {
     
     private final ChannelHandlerContext context;
@@ -83,6 +86,7 @@ public final class CommandExecutor implements Runnable {
             // CHECKSTYLE:OFF
         } catch (final Exception ex) {
             // CHECKSTYLE:ON
+            log.error("sql解析异常！",ex);
             context.write(new ErrPacket(1, ServerErrorCode.ER_STD_UNKNOWN_EXCEPTION, ex.getMessage()));
         } finally {
             context.flush();

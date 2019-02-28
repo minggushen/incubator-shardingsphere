@@ -21,6 +21,7 @@ import com.google.common.base.Optional;
 import io.shardingsphere.core.constant.DatabaseType;
 import io.shardingsphere.core.constant.SQLType;
 import io.shardingsphere.core.parsing.SQLJudgeEngine;
+import io.shardingsphere.core.parsing.antlr.sql.statement.CommentStatement;
 import io.shardingsphere.core.parsing.parser.dialect.mysql.statement.ShowDatabasesStatement;
 import io.shardingsphere.core.parsing.parser.dialect.mysql.statement.UseStatement;
 import io.shardingsphere.core.parsing.parser.sql.SQLStatement;
@@ -65,6 +66,12 @@ public class ComQueryBackendHandlerFactory {
             return new SkipBackendHandler();
         }
         SQLStatement sqlStatement = new SQLJudgeEngine(sql).judge();
+        /**
+         * 增加判断 如果是 CommentStatement类型 直接返回CommentBackendHandler
+         */
+        if (sqlStatement instanceof CommentStatement) {
+            return new CommentBackendHandler();
+        }
         if (SQLType.DCL == sqlStatement.getType() || sqlStatement instanceof SetStatement) {
             return new SchemaBroadcastBackendHandler(sequenceId, sql, backendConnection, databaseType, BackendHandlerFactory.getInstance());
         } else if (sqlStatement instanceof UseStatement) {

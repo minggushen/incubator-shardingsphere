@@ -23,7 +23,7 @@ dataSources:
 
 shardingRule:
   tables:
-    t_order:
+    loan_transfer_contract:
       actualDataNodes: single_source.loan_transfer_contract_${0..127}
       tableStrategy:
         inline:

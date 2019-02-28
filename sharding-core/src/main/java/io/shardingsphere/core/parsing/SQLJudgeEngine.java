@@ -18,6 +18,8 @@
 package io.shardingsphere.core.parsing;
 
 import io.shardingsphere.core.constant.DatabaseType;
+import io.shardingsphere.core.constant.SQLType;
+import io.shardingsphere.core.parsing.antlr.sql.statement.CommentStatement;
 import io.shardingsphere.core.parsing.antlr.sql.statement.dcl.DCLStatement;
 import io.shardingsphere.core.parsing.antlr.sql.statement.ddl.DDLStatement;
 import io.shardingsphere.core.parsing.antlr.sql.statement.tcl.TCLStatement;
@@ -68,6 +70,13 @@ public final class SQLJudgeEngine {
     public SQLStatement judge() {
         LexerEngine lexerEngine = LexerEngineFactory.newInstance(DatabaseType.MySQL, sql);
         lexerEngine.nextToken();
+
+        //对于sql的解释语言特殊处理，该处不进行处理
+        if(sql != null &&!"".equals(sql) && sql.startsWith("/*!") && sql.endsWith("*/")){
+            //该处并不能确定解释语言是dcl，文档中没找到，只是暂时使用
+            return new CommentStatement(SQLType.DCL);
+        }
+
         while (true) {
             TokenType tokenType = lexerEngine.getCurrentToken().getType();
             if (tokenType instanceof Keyword) {
