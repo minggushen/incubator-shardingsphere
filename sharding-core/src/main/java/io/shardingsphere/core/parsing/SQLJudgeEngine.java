@@ -50,6 +50,7 @@ import io.shardingsphere.core.parsing.parser.sql.dql.DQLStatement;
 import io.shardingsphere.core.parsing.parser.sql.dql.select.SelectStatement;
 import io.shardingsphere.core.parsing.parser.token.SchemaToken;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * SQL judge engine.
@@ -58,6 +59,7 @@ import lombok.RequiredArgsConstructor;
  * @author panjuan
  */
 @RequiredArgsConstructor
+@Slf4j
 public final class SQLJudgeEngine {
     
     private final String sql;
@@ -71,8 +73,10 @@ public final class SQLJudgeEngine {
         LexerEngine lexerEngine = LexerEngineFactory.newInstance(DatabaseType.MySQL, sql);
         lexerEngine.nextToken();
 
-        //对于sql的解释语言特殊处理，该处不进行处理
-        if(sql != null &&!"".equals(sql) && sql.startsWith("/*!") && sql.endsWith("*/")){
+        //对于sql的解释语言特殊处理，该处不进行处理--需保证sql当中 没有任何注释语言
+        if(sql != null &&!"".equals(sql) && ((sql.contains("/*!") && sql.contains("*/")) || sql.contains("@@"))){
+            log.warn("当前执行的sql：{}不能被执行！包含特殊字符！/*!，*/，@@，需要修复sql去掉解释语言！");
+
             //该处并不能确定解释语言是dcl，文档中没找到，只是暂时使用
             return new CommentStatement(SQLType.DCL);
         }
